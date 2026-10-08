@@ -65,6 +65,7 @@ def main():
     n = 0
     for t in pending:
         if time.time() - start > BUDGET: break
+        if os.path.exists(os.path.join("ach", t["id"] + ".webp")): n += 1; continue   # arrived with a pull (another catalog had it)
         r = shoot(t["id"], t["u"])
         print(t["id"], r, flush=True)
         if r and r != "ok": failed[t["id"]] = r
