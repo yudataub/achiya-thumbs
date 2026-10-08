@@ -1,0 +1,29 @@
+# Takes the pictures listed in todo.json. Starts by itself when todo.json changes; by hand: Actions -> Achiya pictures -> Run.
+name: Achiya pictures
+on:
+  push:
+    branches: [main]
+    paths: [todo.json]
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: write
+concurrency:
+  group: shoot
+  cancel-in-progress: false
+jobs:
+  shoot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pymupdf pillow
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898729+github-actions[bot]@users.noreply.github.com"
+          python shoot.py
+        env:
+          GH_TOKEN: ${{ github.token }}
